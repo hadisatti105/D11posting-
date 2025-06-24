@@ -2,21 +2,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('pingForm');
   const responseBox = document.getElementById('responseBox');
 
+  // 🔒 Hardcoded values
+  const campaignId = '679166ed7181b';
+  const campaignKey = '6FtjKx9b4QJDL8VMXNrm';
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Get form values
-    const campaignId = document.getElementById('campaignId').value.trim();
-    const campaignKey = document.getElementById('campaignKey').value.trim();
     const callerId = document.getElementById('callerId').value.trim();
 
-    // Validate
-    if (!campaignId || !campaignKey || !callerId) {
-      showResponse('❌ All fields are required.', false);
+    if (!callerId) {
+      showResponse('❌ Caller ID is required.', false);
       return;
     }
 
-    // Prepare payload
     const payload = new URLSearchParams();
     payload.append('lp_campaign_id', campaignId);
     payload.append('lp_campaign_key', campaignKey);
@@ -25,9 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const res = await fetch('/api/ping', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: payload,
       });
 
