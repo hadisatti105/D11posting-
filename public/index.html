@@ -2,24 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>EDM Ping & Transfer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EDM Ping Form</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>EDM Lead Ping & Transfer</h1>
+  <div class="container">
+    <h1>EDM Ping Gateway</h1>
+    <form id="pingForm">
+      <label for="campaignId">Campaign ID *</label>
+      <input type="text" id="campaignId" placeholder="e.g. 679166ed7181b" required />
 
-  <form id="pingForm">
-    <input type="hidden" name="lp_campaign_id" value="679166ed7181b" />
-    <input type="hidden" name="lp_campaign_key" value="6FtjKx9b4QJDL8VMXNrm" />
+      <label for="campaignKey">Campaign Key *</label>
+      <input type="text" id="campaignKey" placeholder="e.g. 6FtjKx9b4QJDL8VMXNrm" required />
 
-    <label>Caller ID:<br />
-      <input type="text" name="caller_id" placeholder="+11234567890" required />
-    </label><br />
+      <label for="callerId">Caller ID *</label>
+      <input type="text" id="callerId" placeholder="+11234567890" required />
 
-    <button type="submit">Submit Ping</button>
-  </form>
+      <button type="submit">Send Ping</button>
+    </form>
 
-  <div id="pingResult"></div>
+    <div id="responseBox" class="response-box" style="display: none;"></div>
+  </div>
 
   <script src="script.js"></script>
 </body>

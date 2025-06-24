@@ -1,34 +1,58 @@
-document.getElementById('pingForm').addEventListener('submit', async function (e) {
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('pingForm');
+  const responseBox = document.getElementById('responseBox');
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-  
-    const formData = new FormData(e.target);
-    const payload = new URLSearchParams(formData);
-  
+
+    // Get form values
+    const campaignId = document.getElementById('campaignId').value.trim();
+    const campaignKey = document.getElementById('campaignKey').value.trim();
+    const callerId = document.getElementById('callerId').value.trim();
+
+    // Validate
+    if (!campaignId || !campaignKey || !callerId) {
+      showResponse('❌ All fields are required.', false);
+      return;
+    }
+
+    // Prepare payload
+    const payload = new URLSearchParams();
+    payload.append('lp_campaign_id', campaignId);
+    payload.append('lp_campaign_key', campaignKey);
+    payload.append('caller_id', callerId);
+
     try {
-      const response = await fetch('http://localhost:3000/api/ping', {
+      const res = await fetch('/api/ping', {
         method: 'POST',
-        body: payload
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: payload,
       });
-  
-      const json = await response.json();
-      const resultBox = document.getElementById('pingResult');
-  
-      if (json.success) {
-        resultBox.innerHTML = `
-          <div class="success">
-            <p><strong>✅ Ping Accepted</strong></p>
-            <p><strong>Ping ID:</strong> ${json.ping_id}</p>
-            <p><strong>Payout:</strong> $${json.payout}</p>
-            <p><strong>Required Duration:</strong> ${json.duration} seconds</p>
-            <p><strong>Transfer Number:</strong> <a href="tel:${json.number}">${json.number}</a></p>
-          </div>
-        `;
+
+      const data = await res.json();
+
+      if (data.success) {
+        showResponse(`
+          ✅ <strong>Ping Accepted</strong><br>
+          📞 Transfer Number: <code>${data.number}</code><br>
+          💰 Payout: $${data.payout}<br>
+          ⏱️ Duration: ${data.duration} seconds
+        `, true);
       } else {
-        resultBox.innerHTML = `<p class="error">❌ Ping Rejected: ${json.message}</p>`;
+        showResponse(`❌ Ping Rejected: ${data.message || 'No Match'}`, false);
       }
+
     } catch (err) {
-      document.getElementById('pingResult').innerHTML =
-        `<p class="error">❌ Network error. Is the proxy running?</p>`;
+      console.error('❌ Network error:', err);
+      showResponse('❌ Network error. Is the proxy running?', false);
     }
   });
-  
+
+  function showResponse(message, isSuccess) {
+    responseBox.innerHTML = message;
+    responseBox.style.color = isSuccess ? 'green' : 'red';
+    responseBox.style.display = 'block';
+  }
+});
